@@ -9,7 +9,7 @@ from typing import Literal, Mapping, Sequence
 import numpy as np
 import pandas as pd
 
-from .settings import ConstraintSettings, SizingSettings, TargetSpec
+from .settings import ConstraintSettings, OptionLegSpec, SizingSettings, TargetSpec
 
 
 @dataclass(frozen=True)
@@ -89,6 +89,23 @@ def build_orders(
         reason = "close (not in targets)" if sym not in goal_notional else f"target {goal:+g} sh, held {positions.get(sym, 0.0):+g}"
         orders.append(OrderIntent(sym, "buy" if delta > 0 else "sell", abs(delta), px, reason, clipped))
     return orders
+
+
+def select_contract(chain: pd.DataFrame, spot: float, as_of: pd.Timestamp, leg: OptionLegSpec) -> pd.Series:
+    """Pick the contract closest to the leg's target DTE, then to strike = moneyness * spot.
+
+    Only contracts with a two-sided quote are eligible.
+    """
+    c = chain[(chain["right"] == leg.right) & (chain["bid"] > 0) & (chain["ask"] > chain["bid"])].copy()
+    if c.empty:
+        raise SizingError(f"no quoted {leg.right}s for {leg.underlying}")
+    c["dte"] = (pd.to_datetime(c["expiry"]) - pd.Timestamp(as_of)).dt.days
+    c = c[c["dte"] > 0]
+    if c.empty:
+        raise SizingError(f"no unexpired {leg.right}s for {leg.underlying}")
+    best_dte = c.loc[(c["dte"] - leg.target_dte).abs().idxmin(), "dte"]
+    c = c[c["dte"] == best_dte]
+    return c.loc[(c["strike"] - leg.moneyness * spot).abs().idxmin()]
 
 
 def check_gross(sizing: SizingSettings, equity: float) -> None:

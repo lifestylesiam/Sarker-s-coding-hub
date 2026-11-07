@@ -162,6 +162,9 @@ class ParamSpec(_Strict):
             raise ValueError(f"{self.label}: default {self.default} outside [{self.min}, {self.max}]")
         return self
 
+    def clamp(self, value: float | int) -> float | int:
+        return min(max(value, self.min), self.max)
+
     @property
     def is_int(self) -> bool:
         return all(isinstance(v, int) and not isinstance(v, bool) for v in (self.min, self.max, self.step))
@@ -300,6 +303,8 @@ class OptionLegSpec(_Strict):
 
 class OptionLegs(_Strict):
     enabled: bool = False
+    min_options_level: int = Field(2, ge=1)  # Alpaca: level 2 = buy calls/puts
+    limit_at: Literal["mid", "ask"] = "mid"
     legs: tuple[OptionLegSpec, ...] = ()
 
 

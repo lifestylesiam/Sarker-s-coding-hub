@@ -28,5 +28,7 @@ targets:
 
 option_legs:
   enabled: false                # needs Alpaca paper options approval
+  min_options_level: 2          # refuse unless the account's options level is at least this
+  limit_at: mid                 # limit price: mid | ask (buys) / bid (sells)
   legs:
     - {underlying: MU, right: call, side: buy, contracts: 1, target_dte: 45, moneyness: 1.0}

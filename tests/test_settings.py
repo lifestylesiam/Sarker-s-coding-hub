@@ -42,3 +42,16 @@ def test_window_longer_than_history_rejected(config_dir):
 def test_param_spec_default_must_be_in_bounds(config_dir):
     with pytest.raises(ValidationError):
         load_config("impact", config_dir, overrides={"params.eta.default": 99.0})
+
+
+@pytest.mark.parametrize("raw", ["2026-09-11", "2026-09-11T00:00:00"[:10]])
+def test_manual_date_accepts_yaml_style_dates(config_dir, raw):
+    import datetime
+
+    for value in (raw, datetime.date(2026, 9, 11)):
+        s = load_settings(config_dir, overrides={"stress.manual_date": value})
+        assert s.stress.manual_date == datetime.date(2026, 9, 11)
+    # round-trips through the JSON used by the Streamlit cache
+    from quantlab.settings import Settings
+
+    assert Settings.model_validate_json(s.model_dump_json()).stress.manual_date == s.stress.manual_date

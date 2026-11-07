@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from datetime import date
 from enum import Enum
 from pathlib import Path
 from typing import Any, Literal, Mapping
@@ -71,7 +72,7 @@ class VolSettings(_Strict):
 
 class StressSettings(_Strict):
     detection: Literal["worst_benchmark_return", "largest_benchmark_range"] = "worst_benchmark_return"
-    manual_date: str | None = None
+    manual_date: date | None = None  # YAML dates (2026-09-11) and strings both accepted
 
 
 class SyntheticSymbol(_Strict):

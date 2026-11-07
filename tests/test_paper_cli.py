@@ -90,10 +90,10 @@ def test_run_record_written_without_secrets(tmp_path, monkeypatch, settings, pcf
     monkeypatch.setenv(settings.credentials.secret_env, fake_secret)
     plan = cli.plan_rebalance(settings, pcfg, FakeBroker(equity=100_000), provider, AS_OF, is_synthetic=True)
     out = cli.write_run_record(tmp_path, settings, pcfg, plan, None)
-    data = json.loads((out / "plan.json").read_text())
+    data = json.loads((out / "plan.json").read_text(encoding="utf-8"))
     assert data["synthetic_data"] is True
     for f in out.iterdir():
-        text = f.read_text()
+        text = f.read_text(encoding="utf-8")
         assert fake_secret not in text and "PKTESTKEY" not in text
 
 

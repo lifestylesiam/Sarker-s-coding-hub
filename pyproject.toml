@@ -18,6 +18,7 @@ dependencies = [
     "python-dotenv>=1.0",
     "pyyaml>=6.0",
     "pydantic>=2.5",
+    "tzdata>=2024.1",  # Windows has no IANA timezone database
 ]
 
 [project.optional-dependencies]

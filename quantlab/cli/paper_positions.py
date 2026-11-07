@@ -119,10 +119,10 @@ def execute(plan: RebalancePlan, broker: Broker, pcfg: PortfolioConfig) -> list[
 def write_run_record(runs_dir: Path, settings: Settings, pcfg: PortfolioConfig, plan: RebalancePlan, executed: list[dict] | None) -> Path:
     out = runs_dir / datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     out.mkdir(parents=True, exist_ok=True)
-    (out / "settings.resolved.json").write_text(settings.model_dump_json(indent=2))
-    (out / "portfolio.resolved.json").write_text(pcfg.model_dump_json(indent=2))
-    (out / "plan.json").write_text(json.dumps(asdict(plan), indent=2, default=str))
-    (out / "executed.json").write_text(json.dumps(executed, indent=2) if executed is not None else "null")
+    (out / "settings.resolved.json").write_text(settings.model_dump_json(indent=2), encoding="utf-8")
+    (out / "portfolio.resolved.json").write_text(pcfg.model_dump_json(indent=2), encoding="utf-8")
+    (out / "plan.json").write_text(json.dumps(asdict(plan), indent=2, default=str), encoding="utf-8")
+    (out / "executed.json").write_text(json.dumps(executed, indent=2) if executed is not None else "null", encoding="utf-8")
     return out
 
 

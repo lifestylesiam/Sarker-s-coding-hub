@@ -416,7 +416,7 @@ def load_config(
     path = directory / f"{name}.yaml"
     raw: dict[str, Any] = {}
     if path.is_file():
-        raw = yaml.safe_load(path.read_text()) or {}
+        raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         if not isinstance(raw, dict):
             raise ValueError(f"{path} must contain a mapping at the top level")
     raw = _deep_merge(raw, _env_overrides(name, os.environ if environ is None else environ))

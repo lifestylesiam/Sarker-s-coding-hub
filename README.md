@@ -12,19 +12,35 @@ A fourth piece, `quantlab-paper`, rebalances an **Alpaca paper account** toward 
 
 ## Quick start (on your machine)
 
-You need Python 3.10 or newer (`python3 --version`).
+You need Python 3.10 or newer. On Windows, install it from python.org and tick **"Add python.exe to PATH"** in the installer (the Microsoft Store `python3` shortcut is not a real install). Then open a new terminal and check:
+
+```bash
+python --version
+```
+
+**Windows (Command Prompt or PowerShell):**
+
+```bash
+python -m venv .venv
+```
+
+```bash
+.venv\Scripts\activate
+```
+
+**macOS / Linux:**
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
 ```
 
+Then, on any platform, with the environment activated:
+
 ```bash
 pip install -e ".[dev]"
 ```
 
-```bash
-cp .env.example .env    # then put your Alpaca paper key ID and secret in .env
-```
+Create your `.env` (Windows: `copy .env.example .env`; macOS/Linux: `cp .env.example .env`), open it in a text editor, and put your Alpaca paper key ID and secret in.
 
 ```bash
 pytest
@@ -33,6 +49,8 @@ pytest
 ```bash
 streamlit run apps/Home.py
 ```
+
+If a command is "not recognized" on Windows, the virtual environment is not activated (the prompt should start with `(.venv)`), or use `python -m streamlit run apps/Home.py`.
 
 With no keys the apps still run on a **deterministic synthetic market** (one-factor model with an injected crash day). Every page says so in a warning banner, so synthetic numbers can't be mistaken for real ones.
 

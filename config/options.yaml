@@ -1,0 +1,36 @@
+# Options lab defaults and UI ranges. The Streamlit sidebar is generated from these specs.
+greek_units:
+  vega_per_vol_points: 1      # vega shown per N vol points (1 => per 1% vol)
+  rho_per_rate_points: 1      # rho shown per N rate points (1 => per 1% rate)
+  theta_per_days: 1           # theta shown per N calendar days
+
+implied_vol:
+  lower: 0.0001
+  upper: 5.0
+  tolerance: 1.0e-8
+
+binomial:
+  steps: 400
+
+chart:
+  spot_range_pct: 0.5         # price-vs-spot chart spans spot*(1 +/- this)
+  points: 201
+
+chain:
+  min_days_to_expiry: 7
+  max_days_to_expiry: 120
+  max_abs_log_moneyness: 0.4
+
+params:
+  spot:        {default: 100.0, min: 1.0,    max: 2000.0, step: 1.0,    label: "Spot (S)"}
+  strike:      {default: 100.0, min: 1.0,    max: 2000.0, step: 1.0,    label: "Strike (K)"}
+  days:        {default: 30,    min: 1,      max: 730,    step: 1,      label: "Days to expiry"}
+  vol:         {default: 0.30,  min: 0.01,   max: 3.0,    step: 0.01,   label: "Volatility (sigma)"}
+  rate:        {default: null,  min: -0.02,  max: 0.15,   step: 0.0025, label: "Risk-free rate (r)", help: "null => settings.market.risk_free_rate"}
+  div_yield:   {default: 0.0,   min: 0.0,    max: 0.15,   step: 0.0025, label: "Dividend yield (q)"}
+
+attribution:                  # default one-day scenario for the P&L attribution view
+  spot_move_pct: {default: -0.05, min: -0.3, max: 0.3,  step: 0.005, label: "Spot move"}
+  vol_change:    {default: 0.05,  min: -0.5, max: 0.5,  step: 0.005, label: "Vol change (abs)"}
+  days_passed:   {default: 1,     min: 0,    max: 60,   step: 1,     label: "Days passed"}
+  rate_change:   {default: 0.0,   min: -0.02, max: 0.02, step: 0.0025, label: "Rate change (abs)"}

@@ -1,0 +1,29 @@
+# Toy market-impact simulator. ILLUSTRATIVE parameters, not calibrated to any market.
+# Model: transient impact in a limit-order book with power-law shape and exponential
+# resilience (Obizhaeva-Wang / Alfonsi-Fruth-Schied style) + linear permanent impact
+# + half-spread cost + arithmetic Brownian price noise. See quantlab/impact.py.
+
+simulation:
+  n_paths: 1000
+  seed: 42
+  post_trade_minutes: 120     # keep simulating after the last fill to show recovery
+  steps_per_minute: 1
+  sweep_max_slices: 60        # N-sweep upper bound for the cost/risk trade-off chart
+  side: sell                  # sell | buy
+
+params:
+  price:            {default: 20.0,  min: 1.0,   max: 1000.0, step: 1.0,   label: "Arrival price ($)"}
+  annual_vol:       {default: 0.60,  min: 0.05,  max: 2.0,    step: 0.05,  label: "Annualized vol"}
+  adv_shares:       {default: 500000, min: 10000, max: 100000000, step: 10000, label: "Avg daily volume (shares)", help: "Low ADV = thin market"}
+  order_pct_adv:    {default: 0.20,  min: 0.005, max: 1.0,    step: 0.005, label: "Order size (% of ADV)"}
+  spread_bps:       {default: 30.0,  min: 0.0,   max: 300.0,  step: 1.0,   label: "Bid-ask spread (bps)"}
+  eta:              {default: 1.0,   min: 0.0,   max: 5.0,    step: 0.05,  label: "Book thinness (eta)", help: "Transient impact scale: displacement = eta*sigma_daily*S*(X/ADV)^alpha"}
+  alpha:            {default: 0.5,   min: 0.2,   max: 1.0,    step: 0.05,  label: "Book shape (alpha)", help: "0.5 ~ square-root law; 1 = linear (flat) book"}
+  gamma:            {default: 0.1,   min: 0.0,   max: 1.0,    step: 0.01,  label: "Permanent impact (gamma)", help: "Linear in shares (no-arbitrage requires linearity)"}
+  half_life_min:    {default: 10.0,  min: 0.5,   max: 390.0,  step: 0.5,   label: "Book resilience half-life (min)"}
+  horizon_min:      {default: 120,   min: 1,     max: 390,    step: 1,     label: "Execution horizon (min)"}
+  n_slices:         {default: 12,    min: 2,     max: 120,    step: 1,     label: "Number of slices"}
+  front_load_decay: {default: 3.0,   min: 0.1,   max: 10.0,   step: 0.1,   label: "Front-load decay", help: "Weights ~ exp(-k * t/T)"}
+  risk_aversion:    {default: 1.0,   min: 0.0,   max: 5.0,    step: 0.1,   label: "Risk aversion (lambda)", help: "Score = mean cost + lambda * std of cost"}
+
+strategies: [all_at_once, twap, front_loaded]

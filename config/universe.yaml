@@ -1,0 +1,15 @@
+# Symbols shown by the volatility dashboard. Groups only affect UI ordering/labels.
+groups:
+  - name: Pitch names
+    symbols: [MU, NVDA, AMD]
+    note: Semiconductor names in the stock pitch.
+  - name: Benchmarks
+    symbols: [SPY, QQQ, SMH]
+    note: Broad market, growth beta, and the semis sector (separates sector vs idiosyncratic vol).
+  - name: Contrast
+    symbols: [KO, VIXY]
+    note: >
+      KO is a low-vol reference. VIXY is a VIX-futures ETF (Alpaca has no VIX index);
+      it bleeds from futures roll, so use it for spike behaviour, not long-run levels.
+
+default_selection: [MU, NVDA, AMD, SPY, SMH]

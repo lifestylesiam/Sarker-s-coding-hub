@@ -1,0 +1,34 @@
+# Paper-trading starter book. ILLUSTRATIVE, not investment advice. Edit freely.
+# Sizing: notional_i = gross_notional * (risk_weight_i / vol_i) / sum_j(risk_weight_j / vol_j)
+# so each leg contributes risk roughly in proportion to its risk_weight.
+
+sizing:
+  method: inverse_vol           # inverse_vol | equal_notional
+  vol_window: 60                # trading days of realized vol used for sizing
+  gross_notional: 25000         # set to a fraction of your paper equity
+  max_gross_to_equity: 0.5      # refuse if gross_notional exceeds this share of account equity
+
+constraints:
+  max_order_notional: 10000
+  min_order_notional: 100       # skip rebalances smaller than this
+  on_cap_breach: clip           # clip | error
+  allow_fractional: false       # Alpaca does not allow fractional shorts
+  close_unlisted: false         # sell positions not listed below
+
+order:
+  type: market                  # market | limit
+  limit_offset_bps: 10          # for limit: buy at ask*(1+x), sell at bid*(1-x) approximated from last close
+  time_in_force: day
+
+targets:
+  - {symbol: MU,   side: long,  risk_weight: 0.40}   # pitch thesis
+  - {symbol: NVDA, side: long,  risk_weight: 0.20}
+  - {symbol: AMD,  side: long,  risk_weight: 0.20}
+  - {symbol: SMH,  side: short, risk_weight: 0.20}   # sector hedge
+
+option_legs:
+  enabled: false                # needs Alpaca paper options approval
+  min_options_level: 2          # refuse unless the account's options level is at least this
+  limit_at: mid                 # limit price: mid | ask (buys) / bid (sells)
+  legs:
+    - {underlying: MU, right: call, side: buy, contracts: 1, target_dte: 45, moneyness: 1.0}

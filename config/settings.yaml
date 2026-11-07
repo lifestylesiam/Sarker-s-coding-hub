@@ -1,0 +1,69 @@
+# Core settings. Every value here can be overridden by env var QUANTLAB__<SECTION>__<KEY>
+# (e.g. QUANTLAB__DATA__FEED=sip) or by CLI `--set section.key=value`.
+# Precedence: CLI > env > this file > model defaults in quantlab/settings.py.
+
+data:
+  provider: alpaca            # alpaca | synthetic
+  fallback_provider: synthetic  # used when the primary is unavailable (no keys / network); null to disable
+  feed: iex                   # alpaca stock feed: iex (free) | sip (paid) | delayed_sip
+  options_feed: indicative    # alpaca options feed: indicative (free) | opra (paid)
+  adjustment: all             # raw | split | dividend | all
+  lookback_days: 730          # calendar days of daily history
+  cache_dir: data/cache
+  cache_max_age_hours: 12     # refetch cached bars older than this
+  intraday_bar_minutes: 1
+
+market:
+  benchmark: SPY
+  timezone: America/New_York
+  trading_days_per_year: 252
+  calendar_days_per_year: 365
+  minutes_per_session: 390
+  risk_free_rate: 0.04        # used as default r in options tools
+
+vol:
+  windows: [20, 60]           # rolling realized-vol windows (trading days)
+  ewma_lambda: 0.94           # RiskMetrics decay
+  zscore_window: 60           # trailing window for stress-day z-scores (excludes the day itself)
+  beta_window: 120            # trailing window for beta to benchmark
+  percentile_window: 252      # lookback for "where is vol vs its own history"
+
+stress:
+  detection: worst_benchmark_return   # worst_benchmark_return | largest_benchmark_range
+  manual_date: null                   # YYYY-MM-DD to pin a specific day; UI can override
+
+synthetic:
+  seed: 7
+  start_price: 100.0
+  market_vol: 0.18            # annualized vol of the common factor
+  default_idio_vol: 0.30      # annualized idiosyncratic vol for unlisted symbols
+  crash_return: -0.06         # common-factor shock injected on one day so stress views have an event
+  crash_days_before_end: 45
+  intraday_trough_minute: 75  # where the injected intraday crash bottoms
+  # Per-symbol (market beta, idiosyncratic vol). Unlisted symbols get beta 1.0 and default_idio_vol.
+  symbols:
+    SPY: {beta: 1.0, idio_vol: 0.02}
+    QQQ: {beta: 1.2, idio_vol: 0.06}
+    SMH: {beta: 1.5, idio_vol: 0.15}
+    NVDA: {beta: 1.8, idio_vol: 0.35}
+    AMD: {beta: 1.7, idio_vol: 0.38}
+    MU: {beta: 1.6, idio_vol: 0.36}
+    KO: {beta: 0.5, idio_vol: 0.12}
+    VIXY: {beta: -3.0, idio_vol: 0.45}
+  options_skew:               # synthetic smile: iv = atm + slope*log(K/F) + curvature*log(K/F)^2
+    atm_vol: 0.45
+    slope: -0.35
+    curvature: 0.8
+
+credentials:
+  key_env: ALPACA_API_KEY
+  secret_env: ALPACA_SECRET_KEY
+  dotenv_path: .env
+
+trading:
+  mode: paper                 # paper | live
+  allow_live: false           # one of three independent switches required for live
+  live_env_flag: QUANTLAB_ALLOW_LIVE
+  live_confirm_value: "I-ACCEPT-REAL-MONEY-RISK"
+  paper_account_prefix: "PA"  # Alpaca paper account numbers start with this; checked after connecting
+  runs_dir: runs

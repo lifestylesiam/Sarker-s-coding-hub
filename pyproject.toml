@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quantlab"
+version = "0.1.0"
+description = "Volatility dashboard, options pricing lab, and a toy market-impact simulator."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "scipy>=1.11",
+    "plotly>=5.18",
+    "streamlit>=1.32",
+    "alpaca-py>=0.30",
+    "python-dotenv>=1.0",
+    "pyyaml>=6.0",
+    "pydantic>=2.5",
+    "tzdata>=2024.1",  # Windows has no IANA timezone database
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+quantlab-paper = "quantlab.cli.paper_positions:main"
+
+[tool.setuptools.packages.find]
+include = ["quantlab*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
